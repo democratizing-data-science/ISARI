@@ -4,6 +4,9 @@ This repository provides two companion single-file HTML dashboards for teaching,
 
 ## Live Dashboards
 
+- **NYU ISARI Workshop Dashboard**  
+  <https://democratizing-data-science.github.io/ISARI/docs/NYU_ISARI_90_Minute_Workshop.html>
+
 - **AERA ISARI Workshop Dashboard**  
   <https://democratizing-data-science.github.io/ISARI/docs/AERA%20ISARI%20Workshop.html>
 
