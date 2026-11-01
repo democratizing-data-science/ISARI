@@ -13,6 +13,10 @@ This repository provides two companion single-file HTML dashboards for teaching,
 - **ISARI Help and Troubleshooting Dashboard**  
   <https://democratizing-data-science.github.io/ISARI/docs/ISARI_Help_and_Troubleshooting.html>
 
+  - **ISARI Help and Troubleshooting Dashboard**  
+  <https://democratizing-data-science.github.io/ISARI/docs/ISARI_PRELIMINARY_ANALYTICAL_REPORT.html>
+
+
 Together, these dashboards provide a public-facing methodological and technical ecosystem for researchers, instructors, students, workshop participants, and research teams interested in privacy-conscious local AI, interpretive accountability, no-code qualitative data science, and ethical mixed-methods integration.
 
 ---
