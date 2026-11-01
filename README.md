@@ -13,7 +13,7 @@ This repository provides two companion single-file HTML dashboards for teaching,
 - **ISARI Help and Troubleshooting Dashboard**  
   <https://democratizing-data-science.github.io/ISARI/docs/ISARI_Help_and_Troubleshooting.html>
 
-  - **ISARI Help and Troubleshooting Dashboard**  
+- **ISARI's example of integration and mixed-methods outputs**  
   <https://democratizing-data-science.github.io/ISARI/docs/ISARI_PRELIMINARY_ANALYTICAL_REPORT.html>
 
 
