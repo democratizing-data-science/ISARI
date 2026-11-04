@@ -1,0 +1,160 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LACOID–ISARI Five-Prompt Library</title><style>:root{--blue:#011f5b;--red:#990033;--pink:#e4007c;--bg:#f4f7fb;--card:#fff;--text:#132035;--muted:#5b6880}@media(prefers-color-scheme:dark){:root{--bg:#0d1726;--card:#142238;--text:#eef4ff;--muted:#b7c4d8}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.55}.hero{background:linear-gradient(135deg,var(--blue),#06498d);color:white;padding:40px 20px}.wrap{max-width:1100px;margin:auto}h1{margin:0 0 8px;font-size:clamp(2rem,5vw,3.4rem)}nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}nav a{color:white;border:1px solid #ffffff66;border-radius:999px;padding:8px 13px;text-decoration:none}main{padding:24px 16px 60px}.note{border-left:6px solid var(--pink);background:var(--card);padding:16px 18px;border-radius:10px;margin-bottom:18px}.prompt{background:var(--card);border-radius:18px;margin:20px 0;box-shadow:0 12px 30px #00153818;overflow:hidden}.prompt header{display:flex;align-items:center;gap:14px;padding:18px;border-bottom:1px solid #7892b233}.num{display:grid;place-items:center;background:var(--blue);color:#fff;width:42px;height:42px;border-radius:50%;font-weight:800}h2{font-size:1.2rem;margin:0}header p{margin:2px 0 0;color:var(--muted)}button{margin-left:auto;background:var(--pink);color:white;border:0;border-radius:10px;padding:10px 13px;font-weight:750;cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid #ffcf40;outline-offset:3px}pre{white-space:pre-wrap;word-wrap:break-word;margin:0;padding:22px;font:inherit;max-height:70vh;overflow:auto}footer{text-align:center;color:var(--muted);padding:20px}@media(max-width:620px){.prompt header{align-items:flex-start;flex-wrap:wrap}button{margin-left:56px}}</style></head><body><div class="hero"><div class="wrap"><h1>LACOID/MDCOR–ISARI Prompt Library</h1><p>Five evidence-bounded prompts for diagnostic, computational-semantic, textual, optional positional, and integrative analysis.</p><nav><a href="#prompt-1">Prompt 1</a><a href="#prompt-2">Prompt 2</a><a href="#prompt-3">Prompt 3</a><a href="#prompt-4">Prompt 4</a><a href="#prompt-5">Prompt 5</a></nav></div></div><main class="wrap"><div class="note"><strong>Sequence:</strong> diagnostic → JSON → representative-text CSV → optional mosaic → integration. Prompt 4 is optional; Prompt 5 supports both two-source and three-source integration.</div><section class="prompt" id="prompt-1"><header><span class="num">1</span><div><h2>Prompt 1. Evaluate the candidate-topic diagnostic</h2><p>Required workflow stage</p></div><button type="button" class="copy" data-target="text-1">Copy full prompt</button></header><pre id="text-1">I am uploading an image of a model selection plot, typically used to determine the optimal number of topics (K) for LDA topic modeling. I am a non-technical user and need your help choosing the best number of topics.
+
+Step 0 — Inventory (do this first).
+Look at the image and report:
+• The range of the x-axis (the number of topics tested).
+• The y-axis scale.
+• The panels (usually one for correlations and one for dissimilarities).
+• The metrics listed in the legend (e.g., Griffiths2004, CaoJuan2009, Arun2010, Deveaud2014).
+• The rules for optimization given by the user (see below).
+
+Optimization Rules to apply:
+• Top panel (Correlations): We want these lines to get as close to zero as possible.
+• Bottom panel (Dissimilarities): We want these lines to get as close to 1 as possible.
+
+Important caveat: Real-world data is noisy. Lines rarely hit exactly 0 or 1. Instead, look for where a line flattens out (plateaus) or forms a sharp “elbow” (a bend). Also look for peaks/valleys and where different lines intersect or cross each other, as consensus across metrics is a strong signal.
+
+Step 1 — Read the graph.
+For each metric (line), describe its trajectory as the number of topics increases: Does it drop steeply and then flatten? Does it climb towards 1 and then plateau? Does it bounce around erratically?
+
+Step 2 — Identify Candidates.
+Based on the rules, identify 2 to 4 candidate “optimal” numbers of topics. For each candidate, explain why you picked it using plain language (e.g., “At K=3, the Griffiths line drops sharply and begins to flatten, while the Arun line reaches its lowest point before rising.”).
+
+Step 3 — Provide a Recommendation.
+Rank the candidates from best to worst. Recommend one primary choice for the number of topics. Explain the trade-offs: what happens if the user picks a slightly higher number (too fragmented) versus a slightly lower number (too broad)?
+
+Note: I previously chose K=3 based on this graph. Does your analysis support this? If so, why? If not, what did I miss?
+
+Tone: Avoid heavy statistical jargon. Use analogies like “the elbow method” or “finding the sweet spot where the lines stop changing dramatically.” Keep it actionable for someone who just wants to know how many topics to analyze next.</pre></section><section class="prompt" id="prompt-2"><header><span class="num">2</span><div><h2>Prompt 2. Evaluate word-to-topic distribution in the LDA interactive plot generated by LACOID and MDCOR</h2><p>Required workflow stage</p></div><button type="button" class="copy" data-target="text-2">Copy full prompt</button></header><pre id="text-2">You are analyzing an LDAvis-format lda.json file: the output of an LDA topic model. I need a human-readable narrative interpretation of each topic, written for a non-technical reader. Ignore any visualization code or assets (d3*.js, ldavis.js, *.html, *.css) — work only from the JSON.
+
+Step 0 — Inventory (do this first, briefly).
+Before interpreting, read the file structure and report:
+• K = number of topics (from mdsDat.topics, cross-checked against mdsDat.x length).
+• R = number of terms displayed per topic (from the R field).
+• The distinct values of tinfo.Category and how many rows each has.
+• Whether tinfo is a concatenation of blocks (typically a Default block plus one block per topic, labeled Topic1…TopicK) and whether any trailing rows mirror token.table.
+• Whether tinfo.logprob / tinfo.loglift values in the Default block look like genuine log-lift statistics or like a descending rank sequence (e.g., R, R−1, …, 1). If they look like placeholders, say so and exclude them from interpretation.
+• The number of unique terms in token.table and how token.table.Topic relates to mdsDat.topics.
+If any expected field is missing or malformed, say so instead of guessing.
+
+Field meanings to use.
+• mdsDat: topics = topic IDs; x/y = MDS layout coordinates only (do not interpret semantically); Freq = marginal topic prevalence (usable for relative size); cluster = grouping hint.
+• tinfo: parallel arrays. Category distinguishes the global Default view (not a topic) from per-topic blocks. Freq in Default = corpus-wide count; Freq in a TopicN block = topic-specific expected count; Total = corpus-wide total; positive loglift = overrepresented in that topic, negative = underrepresented.
+• token.table: term → topic assignment with Freq. Best source for cross-topic “crosspollination.”
+• topic.order, lambda.step, plot.opts: settings only.
+• Relevance (if needed) = λ·logprob + (1 − λ)·loglift.
+
+Interpretation rules.
+• Quote exact term strings; do not invent terms.
+• Group tinfo by Category, not by assumed equal blocks — block sizes may differ.
+• Flag preprocessing artifacts (e.g., endobj, PDF-stream fragments, navigation boilerplate, duplicated stopword-like tokens) and do not base labels on them.
+• Keep the writing readable for someone who has never seen LDA; define any jargon in a clause the first time you use it.
+
+For each topic (every value in mdsDat.topics, in that order), output exactly:
+1. Label — 3–7 word noun phrase.
+2. One-sentence gloss in plain language.
+3. Narrative — 3–5 sentences grounded in the evidence terms.
+4. Strongest evidence terms — 5–10 terms, with logprob/loglift noted.
+5. Cross-topic terms — terms that also appear under other topics in token.table, with their per-topic Freq; comment on how much this blurs the topic.
+6. Artifacts / terms to ignore.
+7. Confidence — low / medium / high, one-sentence justification.
+8. Alternative label(s) you considered.
+
+Final section (after all topics):
+• Coherence table: topic | label | coherent / partly / incoherent | main reason.
+• Cross-topic term table: term | Freq in each topic | verdict.
+• Ranked list of most coherent vs most ambiguous topics.
+• Assumptions and limits: what cannot be inferred from this file alone (corpus size, document-level distribution, whether the CSV’s code values map 1:1 to TopicN labels, etc.).</pre></section><section class="prompt" id="prompt-3"><header><span class="num">3</span><div><h2>Prompt 3. Most representative-docs CSV produced by LACOID and MDCOR</h2><p>Required workflow stage</p></div><button type="button" class="copy" data-target="text-3">Copy full prompt</button></header><pre id="text-3">Continue the same analytical exercise. I am uploading a CSV of the most representative documents per topic from the same LDA model. It may or may not have exactly the same number of topics or the same code names as the JSON — discover both before analyzing.
+
+Step 0 — Inventory (do this first, briefly).
+Before interpreting, report:
+• The distinct values of code and how many rows each has — this is your topic count in the CSV.
+• Whether that count matches K from the JSON. If not, say so and proceed cautiously.
+• Your hypothesized mapping between code values and the JSON’s Topic1…TopicK (e.g., by shared keywords, or by relative prevalence). State your confidence in the mapping and what evidence would change it.
+• The range of relative_text_contribution per code, and how many rows sit near the top.
+
+Columns.
+code = topic code; text = document ID; quote = representative text; relative_text_contribution = representativeness score, max = 1 within each code (higher = more representative; 1.0 = maximally representative within that topic, not “100% topic purity”); relative_group_fit = document-topic fit (secondary filter); text_input = preprocessed tokens (useful for spotting stopword/lemmatization and artifacts). Focus on code, quote, relative_text_contribution; use text for citation and relative_group_fit as a sanity check.
+
+Ordering caveat.
+Do not assume rows are already sorted. For each code, sort by relative_text_contribution descending and treat the highest values as the strongest evidence.
+
+Topic separation rule.
+Organize the answer one section per discovered code, in the order the codes first appear (or ascending if numeric). Each section may cite only quotes with that code — do not blend codes within a section. A clearly labeled final cross-topic comparison is allowed and encouraged, but it must not replace per-topic analysis.
+
+For each code, output:
+1. Label — 3–7 word noun phrase (may differ from the JSON-based label; justify if so).
+2. Narrative — 3–5 sentences grounded in quoted text.
+3. 2–3 supporting quotes — verbatim, ≤25 words each, with text ID and relative_text_contribution.
+4. Recurring terms / phrases across the quotes.
+5. Noise / boilerplate in the quotes (e.g., “Skip to Main Content,” link text, catalog year lists, PDF stream fragments, duplicated definitions). State what you discount and why.
+6. Fit with the JSON-based interpretation — confirm / refine / contradict, and why.
+7. Confidence — low / medium / high, with justification.
+
+Final section:
+• Reconciliation table: code | JSON topic | JSON label | CSV label | final label | confidence | main discrepancy.
+• Cross-topic vocabulary recurring across codes; does it strengthen or weaken separation?
+• Coherence verdict per topic.
+• Limits: this is a top-N sample; absence of a theme is weak evidence; boilerplate can dominate representative docs; the code↔topic mapping is inferred, not given.
+
+Tone. Quote exactly; do not paraphrase inside quotation marks; distinguish observation from inference; write for a non-technical reader.</pre></section><section class="prompt" id="prompt-4"><header><span class="num">4</span><div><h2>Prompt 4. Independence test (mosaic / chi-square) when comparisons are provided</h2><p>Optional positional analysis</p></div><button type="button" class="copy" data-target="text-4">Copy full prompt</button></header><pre id="text-4">Continue the same analytical exercise. I am uploading an independence-test output generated by LACOID or MDCOR. The output is a mosaic plot from a chi-square test of independence. It relates the latent topics or codes to a categorical metadata dimension, such as institution type, sector, source type, document type, or another grouping variable.
+
+The number of topics and metadata categories may vary across analyses. Do not assume a fixed number of topics, fixed category labels, or a fixed axis orientation. Use the mosaic plot to strengthen the positional interpretation of the topics, meaning where the topics are disproportionately concentrated across the metadata categories. Do not use the mosaic plot to redefine the semantic meaning of a topic. Topic meaning must remain grounded primarily in the JSON model output, representative texts, and researcher-reviewed interpretation developed earlier.
+
+Step 0A: Confirm access to the complete evidence.
+Report whether the PDF text layer was extracted, whether a rendered page image was supplied, whether the selected brain can inspect the rendered mosaic, and whether the title, labels, cells, marginal n= labels, residual legend, colors, and border styles are fully visible. Distinguish claims based on extracted text, direct visual inspection, JSON evidence, CSV evidence, and researcher-reviewed interpretations. If only extracted text is available, do not infer colors, residual signs or bands, axis orientation, borders, positions, areas, or other graphical relationships. Stop before cell-level interpretation and recommend a verified vision-capable brain. Do not substitute stereotypes or hypothetical patterns for unavailable visual evidence.
+
+Step 0B: Inventory the test and mosaic.
+Report the chi-square statistic, degrees of freedom if shown, p-value exactly as printed, effect size if shown, and plain-language independence decision. If a value is malformed or impossible, reproduce it and explain the problem without silently correcting it. List horizontal labels left to right and vertical labels top to bottom; determine which dimension represents topics and which represents metadata. Report every marginal n= label, classify each marginal, independently calculate the grand total from both dimensions when possible, and report whether totals agree. Transcribe every residual band, identify the colors for positive, negative, and near-zero residuals, and explain solid/dashed/other border conventions. Do not assume color direction. Define a mosaic plot and standardized residual briefly.
+
+Step 1: Establish topic and code mapping.
+Identify the number of topics from evidence. Map mosaic labels, mdsDat.topics, tinfo Category = TopicN, CSV codes V1…VK, and provisional semantic labels. For every mapping, report support, contradictions, confidence (high/moderate/low/unresolved), and evidence that would change it. Do not treat equal topic counts, similar prevalence, similar sizes, or order alone as proof. If unresolved, retain the mosaic labels and do not attach unverified semantic names.
+
+Step 2: Read the mosaic as a complete residual matrix.
+For every topic × metadata-category cell, report exact labels, fill color, border color/style, residual direction, magnitude band, and classification as overrepresented, underrepresented, neutral, or uncertain. Use the plot’s thresholds; do not invent exact residuals. Include all cells. Keep area (joint frequency), color (residual direction/magnitude), and border style (as defined by the legend) separate.
+
+Step 3: Develop a positional profile for each topic.
+For every topic, report mosaic label, verified JSON identifier and CSV code, provisional semantic label, overrepresented categories with bands, underrepresented categories with bands, neutral categories, uncertain cells, one-sentence positional claim, one cautious speculative hypothesis, at least one alternative explanation, and topic-specific caveats. Separate observation, positional interpretation, speculation, and alternative explanation. Never claim that a metadata category is a topic.
+
+Step 4: Integrate positional evidence with earlier semantic analysis.
+Produce a reconciliation table: mosaic label | JSON topic | CSV code | provisional semantic label | overrepresented categories | underrepresented categories | neutral categories | mapping confidence | whether the positional pattern supports, qualifies, partly contradicts, contradicts, or remains unrelated to the semantic interpretation | evidence. Reassess confidence in each semantic label. Assess any cross-cutting positional axis and label it supported, tentatively supported, speculative, or unsupported.
+
+Final synthesis.
+Provide a ≤3-sentence headline for a non-technical reader, a concise technical summary, limitations, and three empirical follow-up questions with the evidence required. Preserve exact labels; separate observation from inference; do not guess; do not infer causation; do not selectively report only striking cells; do not redefine semantic topics using the mosaic alone; and stop before cell-level interpretation if visual evidence is unavailable.</pre></section><section class="prompt" id="prompt-5"><header><span class="num">5</span><div><h2>Prompt 5. Integrative and evidence-based task</h2><p>Required workflow stage</p></div><button type="button" class="copy" data-target="text-5">Copy full prompt</button></header><pre id="text-5">You now have at least two complementary analyses of the same researcher-selected LDA topic solution: (1) computational-semantic evidence from the JSON model output and (2) textual evidence from the representative-text CSV. When available, you may also have (3) positional evidence from a chi-square mosaic plot. Produce one consolidated, evidence-grounded interpretation.
+
+The JSON describes computational structure. Representative texts support and qualify substantive interpretation. A valid mosaic shows where topics are disproportionately concentrated across metadata categories. JSON and representative-text evidence are required; mosaic evidence is optional. If no valid mosaic is available, complete the consolidation using JSON and representative texts, mark positional fields “Not available,” and make no positional claims. Do not force agreement among evidence streams.
+
+Step 0: Inventory available evidence.
+Classify JSON, CSV, and mosaic evidence as available, unavailable, incomplete, or unusable. Classify the configuration as two-source, three-source, or incomplete. If mosaic evidence is present, verify that a vision-capable brain saw the rendered plot and that mapping and residual encodings were reviewed. Otherwise classify the mosaic as unusable.
+
+Step 1: Verify analytical mapping.
+Map mdsDat.topics, tinfo TopicN, CSV codes V1…VK, provisional labels, and mosaic labels when applicable. Report supporting and contradictory evidence, confidence (High/Moderate/Low/Unresolved), and evidence that would change the mapping. Do not assume sequential correspondence from order or equal counts alone.
+
+Step 2: Consolidate every topic.
+For each topic provide:
+A. Identifiers and final label: JSON topic, tinfo category, CSV code, mosaic label if available, final label, mapping confidence.
+B. A 3–5 sentence plain-language narrative distinguishing computational, textual, and positional evidence.
+C. Five substantively informative computational terms with Category, Freq, Total, logprob, loglift, token.table distribution, and interpretive relevance when available. Flag artifacts.
+D. Two strongest verbatim representative passages with source ID, CSV code, relative_text_contribution, other fit measure when available, and explanation. Never invent, repair, or complete quotations; replace noisy passages transparently.
+E. Positional profile when available: exact labels; overrepresented, underrepresented, neutral, and uncertain categories; residual bands; caveats. Otherwise write “Positional profile: Not available.”
+F. Main cross-topic overlap and boundary: term/concept/function, loading distribution, neighboring topic, overlap type, and substantive boundary.
+G. Contradictions and qualifications: explain whether integration strengthened, narrowed, broadened, divided, renamed, qualified, contradicted, or left the interpretation unresolved.
+H. Final confidence: High/Moderate/Low/Unresolved with 2–3 sentence justification. Absence of positional evidence should not automatically reduce semantic confidence.
+
+Step 3: Master topic table.
+One row per topic: JSON topic | tinfo category | CSV code | mosaic label if available | final label | prevalence | five strongest terms | two source IDs | overrepresented categories or Not available | underrepresented categories or Not available | main overlap | principal qualification | integration outcome | mapping confidence | final confidence.
+
+Step 4: Comparative interpretation.
+Explain the principal distinction, strongest overlap, most coherent and most ambiguous topics, possible over- or under-separation, and whether the researcher-selected solution remains defensible. If positional evidence exists, assess a secondary axis and its value. Otherwise state that it cannot be assessed. Distinguish computational preference, textual interpretability, semantic coherence, positional differentiation, and researcher judgment. Conclude: defensible without qualification; defensible with minor qualifications; defensible with substantial qualifications; requires comparison; or not currently defensible.
+
+Step 5: Story spine.
+Write one paragraph of no more than five sentences for a non-technical reader explaining the corpus, topic distinctions, computational contribution, textual contribution, strongest positional pattern only when available, and principal limitation. Avoid jargon, causal claims, ecological fallacy, exaggerated certainty, and treating provisional labels as objective classifications.
+
+Step 6: Open questions.
+Provide three questions the evidence cannot answer. For each, explain why, identify needed evidence, and propose a follow-up analysis.
+
+Step 7: Final evidence audit.
+List convergent evidence; source-specific evidence; contradictions; unresolved mappings; ambiguous boundaries; cross-topic overlap; extraction/preprocessing artifacts; malformed passages; missing or illegible positional evidence; claims requiring researcher verification; and researcher decisions still required.
+
+Evidence rules.
+JSON and representative texts are required; mosaic evidence is optional. Never treat “Not available” as no association. Never invent patterns, quotations, IDs, residuals, statistics, or mappings. Never infer exact residuals from color bands or visual findings without the rendered mosaic. Never use stereotypes to fill missing evidence. Preserve identifiers and keep evidence streams distinguishable. Treat automated labels as provisional, original texts as authoritative, and researcher review as final.</pre></section></main><footer>Local, copy-and-paste prompt library. No external scripts, fonts, trackers, or network requests.</footer><script>document.querySelectorAll('.copy').forEach(b=>b.addEventListener('click',async()=>{const t=document.getElementById(b.dataset.target).innerText;try{await navigator.clipboard.writeText(t);const o=b.textContent;b.textContent='Copied';setTimeout(()=>b.textContent=o,1300)}catch(e){const r=document.createRange();r.selectNodeContents(document.getElementById(b.dataset.target));const s=getSelection();s.removeAllRanges();s.addRange(r)}}));</script></body></html>
