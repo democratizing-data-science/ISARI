@@ -16,7 +16,9 @@ This repository provides two companion single-file HTML dashboards for teaching,
 - **ISARI's example of integration and mixed-methods outputs**  
   <https://democratizing-data-science.github.io/ISARI/docs/ISARI_PRELIMINARY_ANALYTICAL_REPORT.html>
 
-
+- **LACOID and MDCOR + ISARI prompt integration library**  
+  <https://democratizing-data-science.github.io/ISARI/docs/LACOID_MDCOR_ISARI_Five_Prompt_Library.html>
+  
 Together, these dashboards provide a public-facing methodological and technical ecosystem for researchers, instructors, students, workshop participants, and research teams interested in privacy-conscious local AI, interpretive accountability, no-code qualitative data science, and ethical mixed-methods integration.
 
 ---
